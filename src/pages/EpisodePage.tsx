@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
@@ -18,31 +17,26 @@ const EpisodePage = () => {
   const episode = episodes[episodeIndex];
   
   useEffect(() => {
-    // Simulate fetching the transcript
+    if (!episode) return;
     setLoading(true);
-    // In a real app, you would fetch the transcript from the server
-    // For now, we'll just simulate a delay
-    const timer = setTimeout(() => {
-      setTranscript(`
-        Questa è una trascrizione simulata per l'episodio "${episode?.title}".
-        
-        In un vero podcast, qui ci sarebbe la trascrizione completa dell'episodio,
-        permettendo agli utenti di leggere il contenuto mentre ascoltano o invece di ascoltare.
-        
-        La trascrizione è particolarmente utile per:
-        - Persone con problemi di udito
-        - Chi preferisce leggere invece che ascoltare
-        - Chi cerca informazioni specifiche nell'episodio
-        - Migliorare l'accessibilità e l'SEO del podcast
-        
-        In una implementazione reale, questo testo sarebbe caricato dal file indicato
-        nell'URL della trascrizione dell'episodio.
-      `);
-      setLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, [id, episode?.title]);
+    // Effettuiamo il fetch del file della trascrizione usando l'URL presente in episode.transcriptUrl
+    fetch(episode.transcriptUrl)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error("Errore nel caricamento della trascrizione");
+        }
+        return res.text();
+      })
+      .then(text => {
+        setTranscript(text);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Errore nel fetch della trascrizione:", err);
+        setTranscript("Trascrizione non disponibile.");
+        setLoading(false);
+      });
+  }, [id, episode]);
   
   if (!episode) {
     return (
