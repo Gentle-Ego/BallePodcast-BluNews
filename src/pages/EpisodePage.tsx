@@ -89,6 +89,7 @@ const EpisodePage = () => {
         
         <div className="bg-card rounded-xl overflow-hidden shadow-md mb-8">
           <img src={`/images/${episode.imageUrl}`} alt={episode.title} />
+
         </div>
         
         <h1 className="text-3xl font-bold mb-2">{episode.title}</h1>
