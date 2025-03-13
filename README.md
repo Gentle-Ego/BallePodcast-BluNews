@@ -1,4 +1,4 @@
-# Welcome to my Podcast Ewbsite project!
+# Welcome to my Podcast Website project!
 
 ## How can I edit this code?
 
