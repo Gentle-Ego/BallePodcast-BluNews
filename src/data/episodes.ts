@@ -47,7 +47,7 @@ const episodes: Episode[] = [
   {
     id: "21",
     title: "BluNews N°21",
-    date: "25 Febbraio 2025",
+    date: "18 Febbraio 2025",
     description: "NON TEMERE L'ERRORE",
     imageUrl: "/public/images/blunews21.png",
     audioUrl: "/public/audio/blunews21.mp3",
@@ -58,7 +58,7 @@ const episodes: Episode[] = [
   {
     id: "20",
     title: "BluNews N°20",
-    date: "25 Febbraio 2025",
+    date: "11 Febbraio 2025",
     description: "IL DOVERE DI INSEGNARE LA SCIENZA",
     imageUrl: "/public/images/blunews20.png",
     audioUrl: "/public/audio/blunews20.mp3",
