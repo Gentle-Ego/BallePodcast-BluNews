@@ -18,7 +18,7 @@ const episodes: Episode[] = [
     description: "QUANDO I LIBRI TI CAMBIANO LA VITA!",
     imageUrl: "../../public/images/blunews24.png",
     audioUrl: "../../public/audio/blunews24.mp3",
-    duration: "",
+    duration: "4:30",
     featured: true,
     transcriptUrl: "/transcripts/episode24.txt"
   },
