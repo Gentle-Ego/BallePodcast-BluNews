@@ -88,11 +88,7 @@ const EpisodePage = () => {
         </Button>
         
         <div className="bg-card rounded-xl overflow-hidden shadow-md mb-8">
-          <img 
-            src={episode.imageUrl} 
-            alt={episode.title} 
-            className="w-full h-64 md:h-96 object-cover"
-          />
+          <img src={`/images/${episode.imageUrl}`} alt={episode.title} />
         </div>
         
         <h1 className="text-3xl font-bold mb-2">{episode.title}</h1>
