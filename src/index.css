@@ -33,7 +33,7 @@
     --input: 214 32% 91%;
     --ring: 222 84% 48%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
   }
 
   .dark {
@@ -80,16 +80,46 @@
 @layer utilities {
   .transparent-navbar {
     background-color: transparent;
-    transition: background-color 0.3s ease;
+    backdrop-filter: blur(8px);
+    transition: all 0.4s ease;
   }
   
   .colored-navbar {
     background-color: hsl(var(--background));
-    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(12px);
+    transition: all 0.4s ease;
   }
   
   .hero-gradient {
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-podcast-blue to-podcast-purple bg-clip-text text-transparent;
+  }
+
+  .gradient-bg {
+    @apply bg-gradient-to-br from-podcast-blue/5 to-podcast-purple/5;
   }
 }
