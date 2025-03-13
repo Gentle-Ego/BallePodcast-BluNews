@@ -40,7 +40,7 @@ const episodes: Episode[] = [
     description: "LA BELLEZZA DELL'UNIVERSO",
     imageUrl: "/public/images/blunews22.png",
     audioUrl: "/public/audio/blunews22.mp3",
-    duration: "",
+    duration: "3:55",
     featured: true,
     transcriptUrl: "/transcripts/episode22.txt"
   },
@@ -51,7 +51,7 @@ const episodes: Episode[] = [
     description: "NON TEMERE L'ERRORE",
     imageUrl: "/public/images/blunews21.png",
     audioUrl: "/public/audio/blunews21.mp3",
-    duration: "",
+    duration: "4:27",
     featured: true,
     transcriptUrl: "/transcripts/episode21.txt"
   },
