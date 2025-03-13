@@ -29,7 +29,7 @@ const episodes: Episode[] = [
     description: "PERCHÉ I BAMBINI DI OGGI HANNO SEMPRE PIÙ DIFFICOLTÀ ANCHE NELLE ATTIVITÀ PIÙ SEMPLICI?",
     imageUrl: "../../public/images/blunews23.png",
     audioUrl: "../../public/audio/blunews23.mp3",
-    duration: "",
+    duration: "4:37",
     featured: true,
     transcriptUrl: "/transcripts/episode23.txt"
   },
