@@ -47,20 +47,17 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Contatti</h3>
             <div className="flex space-x-4 mb-4">
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="https://www.facebook.com/CollegioBalleriniFacec/?locale=it_IT" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="https://www.instagram.com/ballerini_official/" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="mailto:info@ballepodcast.it" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="mailto:collegio.ballerini@collegifacec.it" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Mail className="h-5 w-5" />
               </a>
             </div>
-            <p className="text-sm text-muted-foreground">Email: info@ballepodcast.it</p>
+            <p className="text-sm text-muted-foreground">Email: collegio.ballerini@collegifacec.it</p>
           </div>
         </div>
         
