@@ -37,7 +37,7 @@ const Information = () => {
                 <h2 className="text-xl font-semibold">Il Nostro Podcast</h2>
               </div>
               <p className="text-muted-foreground">
-                BallePodcast: BluNews è un podcast settimanale che raccoglie e presenta le notizie più rilevanti della settimana in modo conciso e piacevole. Ogni episodio dura circa 20-30 minuti, perfetto per il tuo pendolarismo o per una pausa caffè.
+                BallePodcast: BluNews è un podcast settimanale che raccoglie e presenta le notizie più rilevanti della settimana in modo conciso e piacevole. Ogni episodio dura circa 3-5 minuti, perfetto per il tuo pendolarismo o per una pausa caffè.
               </p>
             </div>
             
@@ -49,7 +49,7 @@ const Information = () => {
                 <h2 className="text-xl font-semibold">I Nostri Contenuti</h2>
               </div>
               <p className="text-muted-foreground">
-                Copriamo una vasta gamma di argomenti: dall'attualità alla politica, dalla cultura allo sport, dalla tecnologia all'economia. Il nostro team editoriale seleziona con cura le notizie più importanti e le presenta in modo chiaro e obiettivo.
+                Copriamo una vasta gamma di argomenti: dall'attualità alla scienza, dalla cultura allo sport, dalla tecnologia all'economia. Il nostro team editoriale seleziona con cura le notizie più importanti e le presenta in modo chiaro e obiettivo.
               </p>
             </div>
             
@@ -61,46 +61,10 @@ const Information = () => {
                 <h2 className="text-xl font-semibold">La Nostra Programmazione</h2>
               </div>
               <p className="text-muted-foreground">
-                Nuovi episodi vengono pubblicati ogni mercoledì mattina. Non preoccuparti se ne perdi uno: tutti gli episodi rimangono disponibili nel nostro archivio, accessibile in qualsiasi momento tramite questo sito web o sulle principali piattaforme di podcast.
+                Nuovi episodi vengono pubblicati ogni Martedì. Non preoccuparti se ne perdi uno: tutti gli episodi rimangono disponibili nel nostro archivio, accessibile in qualsiasi momento tramite questo sito web o sull'email ufficiale.
               </p>
             </div>
-            
-            <div className="bg-card p-6 rounded-xl shadow-sm">
-              <div className="flex items-center mb-4">
-                <div className="p-3 bg-primary/10 rounded-full mr-4">
-                  <Users className="h-6 w-6 text-primary" />
-                </div>
-                <h2 className="text-xl font-semibold">Il Nostro Team</h2>
-              </div>
-              <p className="text-muted-foreground">
-                Dietro BallePodcast c'è un team di professionisti appassionati di giornalismo e comunicazione. Il nostro host principale, Marco Ballerini, guida gli ascoltatori attraverso le notizie della settimana con chiarezza e un tocco di leggerezza.
-              </p>
-            </div>
-          </div>
           
-          <div className="bg-muted p-8 rounded-xl">
-            <h2 className="text-2xl font-semibold mb-4 text-center">Contattaci</h2>
-            <p className="text-center text-muted-foreground mb-6">
-              Hai domande, suggerimenti o feedback? Siamo sempre felici di sentire i nostri ascoltatori!
-            </p>
-            <div className="max-w-md mx-auto">
-              <div className="flex flex-col space-y-4">
-                <div className="flex justify-between">
-                  <span className="font-medium">Email:</span>
-                  <a href="mailto:info@ballepodcast.it" className="text-primary hover:underline">
-                    info@ballepodcast.it
-                  </a>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Social:</span>
-                  <div className="flex space-x-4">
-                    <a href="#" className="text-primary hover:underline">Facebook</a>
-                    <a href="#" className="text-primary hover:underline">Twitter</a>
-                    <a href="#" className="text-primary hover:underline">Instagram</a>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </main>
