@@ -9,7 +9,6 @@ import Episodes from "./pages/Episodes";
 import EpisodePage from "./pages/EpisodePage";
 import Information from "./pages/Information";
 import NotFound from "./pages/NotFound";
-import { Analytics } from "@vercel/analytics/react"
 
 const queryClient = new QueryClient();
 
