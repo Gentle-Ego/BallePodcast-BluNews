@@ -62,7 +62,7 @@ const episodes: Episode[] = [
     description: "IL DOVERE DI INSEGNARE LA SCIENZA",
     imageUrl: "/public/images/blunews20.png",
     audioUrl: "/public/audio/blunews20.mp3",
-    duration: "",
+    duration: "4:07",
     featured: true,
     transcriptUrl: "/transcripts/episode20.txt"
   }
