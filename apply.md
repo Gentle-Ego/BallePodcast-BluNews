@@ -1,20 +1,51 @@
-Ecco un esempio di come potresti procedere per migliorare la navbar e il tema, con due “punti di intervento” principali:
+Di seguito trovi una proposta di miglioramento per risolvere i problemi segnalati, con alcuni aggiornamenti chiave:
+
+1. **Navbar trasparente in testa e contrasto degli elementi:**  
+   Quando la pagina è completamente in alto, la navbar è trasparente e, se l’immagine sottostante è scura, le icone e il testo risultano poco visibili. La soluzione è quella di applicare un background gradient che garantisca sempre un buon contrasto, indipendentemente dalla modalità tema. Possiamo modificare la classe CSS dedicata alla navbar trasparente in modo da aggiungere un gradiente (ad es. da nero semitrasparente a trasparente) oppure gestire questo aspetto direttamente nel componente.
+
+2. **Tema e icona sole:**  
+   L’attuale icona del sole (in modalità scura) è gialla; se preferisci che sia bianca, la cambiamo. Inoltre, per eliminare l’effetto “circolare” (che viene applicato tramite uno span con sfondo trasparente e hover) lo rimuoviamo dalle classi usate nel ThemeToggle.
+
+3. **Coerenza in modalità mobile:**  
+   Dobbiamo assicurarci che il ThemeToggle riceva una prop (ad esempio, `transparent`) che permetta di forzare l’uso dei colori corretti anche in mobile, in modo che l’icona rispecchi il tema corrente (es. se il sito è in modalità chiara, la luna deve essere visualizzata con il colore impostato per contrastare il gradiente, e viceversa).
 
 ---
 
-### 1. Migliorare il ThemeToggle
+### Aggiornamenti proposti
 
-Attualmente il bottone mostra la stessa icona (e colore derivato dalla classe “text-foreground”) in entrambe le modalità, per cui quando la modalità scura è attiva la “luna” (o meglio l’icona attesa) potrebbe risultare poco visibile. Una soluzione è quella di cambiare il colore (o anche l’icona) in base al tema attivo, in modo da avere sempre il giusto contrasto.
+#### **1. Aggiornamento di index.css (o del file di stile globale)**
+Modifica la classe della navbar trasparente per aggiungere un gradiente che garantisca un contrasto:
+  
+```css
+/* In index.css (nella sezione @layer base o utilities) */
+.transparent-navbar {
+  /* Aggiungiamo un background gradient che parte da un nero semitrasparente */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent);
+  backdrop-filter: blur(8px);
+  transition: all 0.4s ease;
+}
+```
 
-Ad esempio, potresti aggiornare il componente in questo modo:
+Questo garantisce che, anche in testa, la navbar “si distingua” dall’immagine sottostante.
+
+#### **2. Aggiornamento del componente ThemeToggle**
+Aggiorniamo il componente per:
+- Visualizzare l’icona della luna in light mode con colore bianco se la navbar è trasparente (così da avere contrasto con l’immagine scura sottostante),
+- Mostrare il sole con colore bianco (invece di giallo),
+- Rimuovere l’effetto “circolare” che non piace.
+
+Ecco il codice aggiornato:
 
 ```tsx
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 
-export function ThemeToggle() {
+interface ThemeToggleProps {
+  transparent?: boolean;
+}
+
+export function ThemeToggle({ transparent = false }: ThemeToggleProps) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
 
@@ -27,6 +58,7 @@ export function ThemeToggle() {
 
   useEffect(() => {
     if (!mounted) return;
+
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "theme") {
         const newTheme = (e.newValue as "light" | "dark") || "light";
@@ -34,6 +66,7 @@ export function ThemeToggle() {
         document.documentElement.classList.toggle("dark", newTheme === "dark");
       }
     };
+
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, [mounted]);
@@ -50,42 +83,35 @@ export function ThemeToggle() {
       variant="ghost" 
       size="icon" 
       onClick={toggleTheme}
-      className="rounded-full hover:bg-muted relative overflow-hidden group"
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      className="rounded-full hover:bg-transparent focus:ring-0" 
+      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
     >
-      <div className="relative z-10">
-        {theme === "light" ? (
-          // In light mode, mostra un’icona di luna con un colore che risalti sullo sfondo chiaro
-          <Moon className="h-5 w-5 text-gray-800 transform transition-transform duration-300 group-hover:rotate-12" />
-        ) : (
-          // In dark mode, mostra il sole con un colore caldo (ad esempio, giallo)
-          <Sun className="h-5 w-5 text-yellow-400 transform transition-transform duration-300 group-hover:rotate-90" />
-        )}
-      </div>
-      <span className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-podcast-purple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></span>
-      <span className="sr-only">Toggle theme</span>
+      {theme === "light" ? (
+        // In light mode, se la navbar è trasparente forziamo il colore bianco per avere contrasto
+        <Moon className={`h-5 w-5 transform transition-transform duration-300 ${transparent ? "text-white" : "text-gray-800"}`} />
+      ) : (
+        // In dark mode, forziamo il sole bianco
+        <Sun className="h-5 w-5 transform transition-transform duration-300 text-white" />
+      )}
     </Button>
   );
 }
 ```
 
-In questo modo il colore dell’icona cambia in base al tema, garantendo un contrasto adeguato in entrambe le modalità.
+Nota: L’effetto hover circolare (rimosso eliminando eventuali span extra o classi aggiuntive) è stato omesso per mantenere un’interazione più pulita.
 
----
+#### **3. Aggiornamento del componente Navbar**
+Aggiorniamo il componente Navbar per:
+- Passare la prop `transparent` al ThemeToggle,
+- Eventualmente utilizzare le classi aggiornate per il background della navbar (grazie al CSS modificato).
 
-### 2. Rendere la Navbar Responsive e Migliorare l’UX
-
-Per rendere la navbar più “mobile friendly” potresti:
-- Nascondere i link principali su schermi piccoli.
-- Mostrare un pulsante hamburger che apre un menu mobile (ad esempio in un drawer o in un overlay).
-
-Ecco un esempio di come potresti ristrutturare il componente `Navbar`:
+Ecco un esempio aggiornato:
 
 ```tsx
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
 interface NavbarProps {
@@ -105,6 +131,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Se la navbar è trasparente e non scrollata, viene applicato lo stile aggiornato (con gradiente)
   const navbarClass = transparent && !isScrolled 
     ? "transparent-navbar" 
     : "colored-navbar";
@@ -137,12 +164,12 @@ export function Navbar({ transparent = false }: NavbarProps) {
           >
             Informazioni
           </Link>
-          <ThemeToggle />
+          <ThemeToggle transparent={transparent && !isScrolled} />
         </div>
 
         {/* Mobile Hamburger Button */}
         <div className="md:hidden flex items-center">
-          <ThemeToggle />
+          <ThemeToggle transparent={transparent && !isScrolled} />
           <Button 
             variant="ghost" 
             size="icon" 
@@ -181,20 +208,13 @@ export function Navbar({ transparent = false }: NavbarProps) {
 }
 ```
 
-**Cosa cambia in questo esempio?**
+Con queste modifiche:
+- La navbar trasparente ora usa un background gradient (definito in CSS) per garantire contrasto con l’immagine sottostante.
+- Il ThemeToggle riceve una prop `transparent` che, se la navbar è in modalità trasparente (e non scrollata), forza l’icona (luna o sole) ad avere colore bianco.
+- L’icona del sole è ora bianca.
+- L’effetto hover “circolare” è stato rimosso (le classi hover nel Button sono state semplificate).
+- La gestione in mobile è coerente: in entrambi i casi (desktop e mobile) viene passato il corretto valore di `transparent` al ThemeToggle, in modo da mostrare sempre l’icona corretta in base allo scroll e al tema.
 
-- **Mobile vs. Desktop:**  
-  - Su schermi **md e superiori** i link di navigazione e il ThemeToggle vengono mostrati in linea (come prima).  
-  - Su dispositivi mobili (sotto “md”) viene visualizzato solo il ThemeToggle e un pulsante hamburger (Menu/X) per attivare un overlay menu.
+Questi aggiornamenti dovrebbero risolvere i problemi segnalati e migliorare sia la UI che la UX della navbar per PC e dispositivi mobili.
 
-- **Mobile Menu Overlay:**  
-  - Quando `mobileMenuOpen` è attivo, viene mostrato un overlay (sotto la navbar) con i link di navigazione in una colonna centrata.
-  - Cliccando un link viene chiuso il menu.
-
-Questa soluzione migliora l’UX per dispositivi mobili (dove lo spazio è limitato) e permette agli utenti di accedere facilmente alle pagine principali.
-
----
-
-Questi sono due esempi di interventi sul tema e sulla navbar per risolvere il problema della visibilità del pulsante di tema e per rendere la navbar responsive e migliorare l’esperienza utente.
-
-Fammi sapere se desideri ulteriori dettagli o altre modifiche!
+Fammi sapere se desideri ulteriori modifiche o chiarimenti!
