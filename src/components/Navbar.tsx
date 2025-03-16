@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
@@ -53,15 +53,15 @@ export function Navbar({ transparent = false }: NavbarProps) {
           >
             Informazioni
           </Link>
-          <ThemeToggle />
+<ThemeToggle transparent={transparent && !isScrolled} />
         </div>
 
         {/* Mobile Hamburger Button */}
         <div className="md:hidden flex items-center">
-          <ThemeToggle />
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <ThemeToggle transparent={transparent && !isScrolled} />
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
             aria-label="Toggle menu"
             className="ml-2"
