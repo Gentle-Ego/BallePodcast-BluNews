@@ -66,7 +66,11 @@ export function Navbar({ transparent = false }: NavbarProps) {
             aria-label="Toggle menu"
             className="ml-2"
           >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileMenuOpen ? (
+              <X className={`h-6 w-6 ${transparent && !isScrolled ? "text-white" : "text-gray-800"}`} />
+            ) : (
+              <Menu className={`h-6 w-6 ${transparent && !isScrolled ? "text-white" : "text-gray-800"}`} />
+            )}
           </Button>
         </div>
       </div>
