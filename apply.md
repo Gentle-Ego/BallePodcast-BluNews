@@ -1,80 +1,59 @@
-Qui di seguito trovi due aggiornamenti da applicare:
+Ecco due soluzioni da applicare per risolvere i problemi:
 
 ---
 
-### 1. Rimuovere l’effetto “circolare” sull’hover
+### 1. Rimuovere l'effetto cerchio (hover overlay) mantenendo la rotazione
 
-Verifica il componente **ThemeToggle.tsx**: rimuovi qualsiasi classe o pseudo-elemento che aggiunge un background extra sull’hover. Ad esempio, se avevi un `<span>` assoluto che applicava un background gradient durante l’hover, rimuovilo. Nel codice che ti ho proposto in precedenza ho già eliminato quel `<span>`. Assicurati che nel componente non ci siano altre classi che aggiungano un effetto di “hover background” circolare; ad esempio, evita di usare classi come `hover:bg-muted` se non desideri alcun cambiamento visivo.
-
-Esempio aggiornato di **ThemeToggle.tsx** (senza overlay hover):
+Il “cerchio” che appare sotto l’icona in hover è probabilmente ereditato dagli stili di default del bottone ghost. Per rimuoverlo pur mantenendo la rotazione dell’icona, basta forzare lo sfondo a rimanere trasparente durante hover/active. Ad esempio, nel componente **ThemeToggle.tsx** modifica la proprietà `className` del bottone aggiungendo le classi per eliminare il background in hover e in active:
 
 ```tsx
-import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+<Button 
+  variant="ghost" 
+  size="icon" 
+  onClick={toggleTheme}
+  // Aggiungi hover e active trasparent per eliminare l'overlay
+  className="rounded-full relative overflow-hidden group focus:ring-0 hover:bg-transparent active:bg-transparent"
+  aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+>
+  {theme === "light" ? (
+    <Moon className={`h-5 w-5 transform transition-transform duration-300 group-hover:rotate-12 ${transparent ? "text-white" : "text-gray-800"}`} />
+  ) : (
+    <Sun className="h-5 w-5 transform transition-transform duration-300 text-white group-hover:rotate-90" />
+  )}
+  <span className="sr-only">Toggle theme</span>
+</Button>
+```
 
-interface ThemeToggleProps {
-  transparent?: boolean;
-}
+Questo override (hover:bg-transparent active:bg-transparent) impedirà al bottone di applicare un background extra (quello a forma di cerchio) quando ci passi sopra, lasciando invariato l’effetto di rotazione.
 
-export function ThemeToggle({ transparent = false }: ThemeToggleProps) {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [mounted, setMounted] = useState(false);
+---
 
+### 2. Hamburger mobile non visibile in light mode e problemi al cambio viewport
+
+Il problema sembra dovuto al fatto che il colore dell’icona nell’header mobile viene calcolato usando la prop `transparent && !isScrolled`, che però non si adatta correttamente in mobile. La soluzione è usare un hook che rilevi il tema corrente (chiaro o scuro) e applicare la classe appropriata.
+
+#### a. Crea un hook per il tema corrente (puoi metterlo in un file separato, ad esempio `useCurrentTheme.ts`):
+
+```tsx
+import { useState, useEffect } from "react";
+
+export function useCurrentTheme() {
+  const [currentTheme, setCurrentTheme] = useState("light");
   useEffect(() => {
-    setMounted(true);
-    const savedTheme = (localStorage.getItem("theme") as "light" | "dark") || "light";
-    setTheme(savedTheme);
-    document.documentElement.classList.toggle("dark", savedTheme === "dark");
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "theme") {
-        const newTheme = (e.newValue as "light" | "dark") || "light";
-        setTheme(newTheme);
-        document.documentElement.classList.toggle("dark", newTheme === "dark");
-      }
+    const updateTheme = () => {
+      setCurrentTheme(
+        document.documentElement.classList.contains("dark") ? "dark" : "light"
+      );
     };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, [mounted]);
-
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-  };
-
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={toggleTheme}
-      // Rimuoviamo hover:bg-muted per non avere alcun background hover
-      className="rounded-full focus:ring-0"
-      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-    >
-      {theme === "light" ? (
-        <Moon className={`h-5 w-5 transform transition-transform duration-300 ${transparent ? "text-white" : "text-gray-800"}`} />
-      ) : (
-        <Sun className="h-5 w-5 transform transition-transform duration-300 text-white" />
-      )}
-      <span className="sr-only">Toggle theme</span>
-    </Button>
-  );
+    updateTheme();
+    window.addEventListener("storage", updateTheme);
+    return () => window.removeEventListener("storage", updateTheme);
+  }, []);
+  return currentTheme;
 }
 ```
 
----
-
-### 2. Risolvere il problema dell'hamburger in modalità mobile
-
-Nel componente **Navbar.tsx** per la sezione mobile, modifica l'icona dell'hamburger (e quella di chiusura) in modo da applicare la stessa logica di colore usata in ThemeToggle. Ad esempio, imposta la classe in base a `transparent && !isScrolled` per far sì che in modalità chiara la icona appaia bianca su sfondi scuri.
-
-Ecco il frammento aggiornato di **Navbar.tsx** per la sezione mobile:
+#### b. Modifica la sezione mobile del componente **Navbar.tsx** in modo che usi il nuovo hook:
 
 ```tsx
 import { Link, useLocation } from "react-router-dom";
@@ -82,6 +61,7 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { useCurrentTheme } from "@/hooks/useCurrentTheme"; // importa il nuovo hook
 
 interface NavbarProps {
   transparent?: boolean;
@@ -91,20 +71,29 @@ export function Navbar({ transparent = false }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const currentTheme = useCurrentTheme(); // ottieni il tema corrente
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navbarClass = transparent && !isScrolled ? "transparent-navbar" : "colored-navbar";
+  const navbarClass = transparent && !isScrolled 
+    ? "transparent-navbar" 
+    : "colored-navbar";
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 py-4 px-6 md:px-12 ${navbarClass}`}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-3">
-          <img src="/logoBallerini.png" alt="BallePodcast Logo" className="h-10 w-auto" />
+          <img 
+            src="/logoBallerini.png" 
+            alt="BallePodcast Logo" 
+            className="h-10 w-auto"
+          />
           <span className={`text-lg font-semibold ${transparent && !isScrolled ? "text-white" : ""}`}>
             BallePodcast: BluNews
           </span>
@@ -112,19 +101,15 @@ export function Navbar({ transparent = false }: NavbarProps) {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center space-x-8">
-          <Link
-            to="/episodi"
-            className={`text-sm font-medium hover:text-primary transition-colors ${
-              transparent && !isScrolled ? "text-white hover:text-white/80" : ""
-            } ${location.pathname === "/episodi" ? "text-primary" : ""}`}
+          <Link 
+            to="/episodi" 
+            className={`text-sm font-medium hover:text-primary transition-colors ${transparent && !isScrolled ? "text-white hover:text-white/80" : ""} ${location.pathname === "/episodi" ? "text-primary" : ""}`}
           >
             Episodi
           </Link>
-          <Link
-            to="/informazioni"
-            className={`text-sm font-medium hover:text-primary transition-colors ${
-              transparent && !isScrolled ? "text-white hover:text-white/80" : ""
-            } ${location.pathname === "/informazioni" ? "text-primary" : ""}`}
+          <Link 
+            to="/informazioni" 
+            className={`text-sm font-medium hover:text-primary transition-colors ${transparent && !isScrolled ? "text-white hover:text-white/80" : ""} ${location.pathname === "/informazioni" ? "text-primary" : ""}`}
           >
             Informazioni
           </Link>
@@ -142,9 +127,9 @@ export function Navbar({ transparent = false }: NavbarProps) {
             className="ml-2"
           >
             {mobileMenuOpen ? (
-              <X className={`h-6 w-6 ${transparent && !isScrolled ? "text-white" : "text-gray-800"}`} />
+              <X className={`h-6 w-6 ${currentTheme === "dark" ? "text-white" : "text-gray-800"}`} />
             ) : (
-              <Menu className={`h-6 w-6 ${transparent && !isScrolled ? "text-white" : "text-gray-800"}`} />
+              <Menu className={`h-6 w-6 ${currentTheme === "dark" ? "text-white" : "text-gray-800"}`} />
             )}
           </Button>
         </div>
@@ -154,15 +139,15 @@ export function Navbar({ transparent = false }: NavbarProps) {
       {mobileMenuOpen && (
         <div className="md:hidden absolute inset-x-0 top-full bg-background shadow-md">
           <div className="flex flex-col items-center py-4 space-y-4">
-            <Link
-              to="/episodi"
+            <Link 
+              to="/episodi" 
               onClick={() => setMobileMenuOpen(false)}
               className="text-sm font-medium hover:text-primary transition-colors"
             >
               Episodi
             </Link>
-            <Link
-              to="/informazioni"
+            <Link 
+              to="/informazioni" 
               onClick={() => setMobileMenuOpen(false)}
               className="text-sm font-medium hover:text-primary transition-colors"
             >
@@ -176,10 +161,12 @@ export function Navbar({ transparent = false }: NavbarProps) {
 }
 ```
 
-In questo modo:
-- Il componente **ThemeToggle** non genera più alcun effetto hover circolare perché abbiamo rimosso il background hover e l'overlay.
-- Nel menu mobile, l'icona dell'hamburger (e quella di chiusura) riceve una classe condizionale che, se la navbar è trasparente (ovvero `transparent && !isScrolled`), forza il colore dell'icona a essere bianco per garantire la visibilità su sfondo scuro.
+Queste modifiche faranno sì che:
+- Il bottone per il cambio tema non applichi più l'effetto "cerchio" (grazie a hover:bg-transparent active:bg-transparent) ma mantenga la rotazione in hover.
+- In modalità mobile, l'icona dell'hamburger (e quella di chiusura) userà il colore basato sul tema corrente (usando il nostro hook `useCurrentTheme`) invece di basarsi esclusivamente sul prop `transparent`, così da avere sempre il contrasto corretto quando si passa da desktop a mobile.
 
-Applica queste modifiche e verifica che in tutte le situazioni (desktop, mobile, modalità chiara e scura) l'interfaccia sia coerente e le icone siano sempre leggibili.
+Applica questi aggiornamenti e verifica che ora:
+- Non ci sia più l'effetto di cerchio sotto l'icona in hover;
+- L'icona dell'hamburger in mobile si adatti correttamente al tema (in light mode scura o in dark mode chiara).
 
-Fammi sapere se serve ulteriore assistenza o modifiche!
+Se persistono ulteriori problemi, fammi sapere!

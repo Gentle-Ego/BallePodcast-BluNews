@@ -47,7 +47,7 @@ export function ThemeToggle({ transparent }: ThemeToggleProps) {
       variant="ghost" 
       size="icon" 
       onClick={toggleTheme}
-      className="rounded-full relative overflow-hidden group focus:ring-0"
+      className="rounded-full relative overflow-hidden group focus:ring-0 hover:bg-transparent active:bg-transparent"
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >
       {theme === "light" ? (

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { useCurrentTheme } from "@/hooks/useCurrentTheme"; // importa il nuovo hook
 
 interface NavbarProps {
   transparent?: boolean;
@@ -12,6 +13,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const currentTheme = useCurrentTheme(); // ottieni il tema corrente
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,7 +55,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
           >
             Informazioni
           </Link>
-<ThemeToggle transparent={transparent && !isScrolled} />
+          <ThemeToggle transparent={transparent && !isScrolled} />
         </div>
 
         {/* Mobile Hamburger Button */}
@@ -67,9 +69,9 @@ export function Navbar({ transparent = false }: NavbarProps) {
             className="ml-2"
           >
             {mobileMenuOpen ? (
-              <X className={`h-6 w-6 ${transparent && !isScrolled ? "text-white" : "text-gray-800"}`} />
+              <X className={`h-6 w-6 ${currentTheme === "dark" ? "text-white" : "text-gray-800"}`} />
             ) : (
-              <Menu className={`h-6 w-6 ${transparent && !isScrolled ? "text-white" : "text-gray-800"}`} />
+              <Menu className={`h-6 w-6 ${currentTheme === "dark" ? "text-white" : "text-gray-800"}`} />
             )}
           </Button>
         </div>
