@@ -15,21 +15,29 @@ export function Navbar({ transparent = false }: NavbarProps) {
   const location = useLocation();
   const currentTheme = useCurrentTheme();
 
-  // Definiamo se la navbar deve essere trasparente
-  const isTransparent = transparent && !isScrolled;
-  
-  // Calcoliamo il colore dell'icona hamburger:
-  // Se il tema è dark, l'icona è sempre bianca; altrimenti, dipende da isTransparent.
-  const hamburgerColor = currentTheme === "dark" ? "text-white" : (isTransparent ? "text-white" : "text-gray-800");
+  // In light mode, l'icona deve essere bianca se non si è scrollati (navbar trasparente)
+  // e scura quando si è scrollati.
+  // In dark mode, l'icona è sempre bianca.
+  const hamburgerColor =
+    currentTheme === "dark"
+      ? "text-white"
+      : (!isScrolled ? "text-white" : "text-gray-800");
 
+  // Usare document.documentElement.scrollTop per una compatibilità maggiore su mobile
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      const scrollTop = document.documentElement.scrollTop || window.pageYOffset;
+      setIsScrolled(scrollTop > 10);
     };
-    window.addEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Chiamata immediata per impostare lo stato iniziale
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // La navbar è trasparente se viene passata la prop "transparent" e non si è scrollati.
+  const isTransparent = transparent && !isScrolled;
   const navbarClass = isTransparent ? "transparent-navbar" : "colored-navbar";
 
   return (
