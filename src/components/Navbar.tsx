@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import { useCurrentTheme } from "@/hooks/useCurrentTheme"; // se necessario
+import { useCurrentTheme } from "@/hooks/useCurrentTheme"; // Hook per il tema corrente
 
 interface NavbarProps {
   transparent?: boolean;
@@ -13,9 +13,14 @@ export function Navbar({ transparent = false }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  // Puoi continuare a usare useCurrentTheme se serve per altri casi,
-  // ma per il colore della navbar usiamo la stessa logica di ThemeToggle:
+  const currentTheme = useCurrentTheme();
+
+  // Definiamo se la navbar deve essere trasparente
   const isTransparent = transparent && !isScrolled;
+  
+  // Calcoliamo il colore dell'icona hamburger:
+  // Se il tema è dark, l'icona è sempre bianca; altrimenti, dipende da isTransparent.
+  const hamburgerColor = currentTheme === "dark" ? "text-white" : (isTransparent ? "text-white" : "text-gray-800");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,9 +30,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navbarClass = transparent && !isScrolled 
-    ? "transparent-navbar" 
-    : "colored-navbar";
+  const navbarClass = isTransparent ? "transparent-navbar" : "colored-navbar";
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 py-4 px-6 md:px-12 ${navbarClass}`}>
@@ -38,7 +41,7 @@ export function Navbar({ transparent = false }: NavbarProps) {
             alt="BallePodcast Logo" 
             className="h-10 w-auto"
           />
-          <span className={`text-lg font-semibold ${transparent && !isScrolled ? "text-white" : ""}`}>
+          <span className={`text-lg font-semibold ${isTransparent ? "text-white" : ""}`}>
             BallePodcast: BluNews
           </span>
         </Link>
@@ -47,33 +50,33 @@ export function Navbar({ transparent = false }: NavbarProps) {
         <div className="hidden md:flex items-center space-x-8">
           <Link 
             to="/episodi" 
-            className={`text-sm font-medium hover:text-primary transition-colors ${transparent && !isScrolled ? "text-white hover:text-white/80" : ""} ${location.pathname === "/episodi" ? "text-primary" : ""}`}
+            className={`text-sm font-medium hover:text-primary transition-colors ${isTransparent ? "text-white hover:text-white/80" : ""} ${location.pathname === "/episodi" ? "text-primary" : ""}`}
           >
             Episodi
           </Link>
           <Link 
             to="/informazioni" 
-            className={`text-sm font-medium hover:text-primary transition-colors ${transparent && !isScrolled ? "text-white hover:text-white/80" : ""} ${location.pathname === "/informazioni" ? "text-primary" : ""}`}
+            className={`text-sm font-medium hover:text-primary transition-colors ${isTransparent ? "text-white hover:text-white/80" : ""} ${location.pathname === "/informazioni" ? "text-primary" : ""}`}
           >
             Informazioni
           </Link>
-          <ThemeToggle transparent={transparent && !isScrolled} />
+          <ThemeToggle transparent={isTransparent} />
         </div>
 
         {/* Mobile Hamburger Button */}
-<div className="md:hidden flex items-center">
-          <ThemeToggle transparent={transparent && !isScrolled} />
-<Button
+        <div className="md:hidden flex items-center">
+          <ThemeToggle transparent={isTransparent} />
+          <Button
             variant="ghost"
             size="icon"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
             aria-label="Toggle menu"
             className="ml-2"
           >
-{mobileMenuOpen ? (
-              <X className={`h-6 w-6 ${isTransparent ? "text-white" : "text-gray-800"}`} />
+            {mobileMenuOpen ? (
+              <X className={`h-6 w-6 ${hamburgerColor}`} />
             ) : (
-              <Menu className={`h-6 w-6 ${isTransparent ? "text-white" : "text-gray-800"}`} />
+              <Menu className={`h-6 w-6 ${hamburgerColor}`} />
             )}
           </Button>
         </div>

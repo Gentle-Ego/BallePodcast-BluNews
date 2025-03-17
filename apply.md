@@ -1,6 +1,6 @@
-Per far sì che l'icona dell'hamburger in modalità mobile segua la stessa logica dinamica dell'icona adiacente (ThemeToggle), puoi creare una variabile (ad esempio `isTransparent`) che verifica se la navbar deve essere trasparente (ossia se `transparent && !isScrolled` è true) e usarla per impostare il colore dell'icona.
+Per fare in modo che in modalità scura l'icona dell'hamburger su mobile rimanga sempre chiara, puoi introdurre una variabile (ad esempio `hamburgerColor`) che tenga conto del tema corrente. In pratica, se il tema è "dark", allora l'icona sarà sempre bianca, altrimenti verrà calcolata in base a `isTransparent`.
 
-Ad esempio, nel file **Navbar.tsx** modifica il codice della sezione mobile in questo modo:
+Ecco come aggiornare **Navbar.tsx**:
 
 ```tsx
 import { Link, useLocation } from "react-router-dom";
@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import { useCurrentTheme } from "@/hooks/useCurrentTheme"; // se necessario
+import { useCurrentTheme } from "@/hooks/useCurrentTheme"; // Hook per il tema corrente
 
 interface NavbarProps {
   transparent?: boolean;
@@ -18,9 +18,14 @@ export function Navbar({ transparent = false }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  // Puoi continuare a usare useCurrentTheme se serve per altri casi,
-  // ma per il colore della navbar usiamo la stessa logica di ThemeToggle:
+  const currentTheme = useCurrentTheme();
+
+  // Definiamo se la navbar deve essere trasparente
   const isTransparent = transparent && !isScrolled;
+  
+  // Calcoliamo il colore dell'icona hamburger:
+  // Se il tema è dark, l'icona è sempre bianca; altrimenti, dipende da isTransparent.
+  const hamburgerColor = currentTheme === "dark" ? "text-white" : (isTransparent ? "text-white" : "text-gray-800");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,9 +79,9 @@ export function Navbar({ transparent = false }: NavbarProps) {
             className="ml-2"
           >
             {mobileMenuOpen ? (
-              <X className={`h-6 w-6 ${isTransparent ? "text-white" : "text-gray-800"}`} />
+              <X className={`h-6 w-6 ${hamburgerColor}`} />
             ) : (
-              <Menu className={`h-6 w-6 ${isTransparent ? "text-white" : "text-gray-800"}`} />
+              <Menu className={`h-6 w-6 ${hamburgerColor}`} />
             )}
           </Button>
         </div>
@@ -108,9 +113,6 @@ export function Navbar({ transparent = false }: NavbarProps) {
 }
 ```
 
-In questo modo:
+Con questa modifica l'icona dell'hamburger (sia per il Menu che per la X) utilizzerà sempre `"text-white"` se il tema corrente è dark, indipendentemente dallo stato di scroll. In modalità chiara, invece, si comporterà come prima (bianca se trasparente, altrimenti grigia). 
 
-- Viene definita la variabile `isTransparent` basata su `transparent && !isScrolled`, che è esattamente la stessa logica usata dal **ThemeToggle**.
-- L'icona dell'hamburger (sia la X che il Menu) usa `isTransparent` per decidere il colore: se `isTransparent` è true, l'icona è bianca; altrimenti è scura (`text-gray-800`).
-
-Questo farà sì che l'icona dell'hamburger cambi colore dinamicamente nello stesso modo dell'icona adiacente, risolvendo il problema che avevi.
+Fammi sapere se va bene o se serve ulteriore assistenza!
