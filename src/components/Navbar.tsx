@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import { useCurrentTheme } from "@/hooks/useCurrentTheme"; // importa il nuovo hook
+import { useCurrentTheme } from "@/hooks/useCurrentTheme"; // se necessario
 
 interface NavbarProps {
   transparent?: boolean;
@@ -13,7 +13,9 @@ export function Navbar({ transparent = false }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const currentTheme = useCurrentTheme(); // ottieni il tema corrente
+  // Puoi continuare a usare useCurrentTheme se serve per altri casi,
+  // ma per il colore della navbar usiamo la stessa logica di ThemeToggle:
+  const isTransparent = transparent && !isScrolled;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,19 +61,19 @@ export function Navbar({ transparent = false }: NavbarProps) {
         </div>
 
         {/* Mobile Hamburger Button */}
-        <div className="md:hidden flex items-center">
+<div className="md:hidden flex items-center">
           <ThemeToggle transparent={transparent && !isScrolled} />
-          <Button
+<Button
             variant="ghost"
             size="icon"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
             aria-label="Toggle menu"
             className="ml-2"
           >
-            {mobileMenuOpen ? (
-              <X className={`h-6 w-6 ${currentTheme === "dark" ? "text-white" : "text-gray-800"}`} />
+{mobileMenuOpen ? (
+              <X className={`h-6 w-6 ${isTransparent ? "text-white" : "text-gray-800"}`} />
             ) : (
-              <Menu className={`h-6 w-6 ${currentTheme === "dark" ? "text-white" : "text-gray-800"}`} />
+              <Menu className={`h-6 w-6 ${isTransparent ? "text-white" : "text-gray-800"}`} />
             )}
           </Button>
         </div>
