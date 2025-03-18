@@ -1,5 +1,7 @@
 # BallePodcast-BluNews
 
+(you can check this project here: https://blunews.vercel.app)
+
 ## Technologies Used
 
 - Vite
