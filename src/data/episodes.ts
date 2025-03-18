@@ -12,6 +12,17 @@ export interface Episode {
 
 const episodes: Episode[] = [
   {
+    id: "25",
+    title: "BluNews N°25",
+    date: "18 Marzo 2025",
+    description: "IL MONDO HA BISOGNO DI PADRI!",
+    imageUrl: "/images/blunews25.png",
+    audioUrl: "/audio/blunews25.mp3",
+    duration: "4:57",
+    featured: true,
+    transcriptUrl: "/transcripts/episode25.txt"
+  },
+  {
     id: "24",
     title: "BluNews N°24",
     date: "11 Marzo 2025",
