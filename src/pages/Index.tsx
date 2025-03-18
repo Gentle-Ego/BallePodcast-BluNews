@@ -35,7 +35,7 @@ const Index = () => {
             Benvenuto al BallePodcast
           </h1>
           <p className="text-lg md:text-xl text-white/90 max-w-3xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            Qui potrai sentire ai podcast delle BluNews del Ballerini senza il bisogno di guardare lo schermo...
+            Qui potrai sentire i podcast delle BluNews del Ballerini senza il bisogno di guardare lo schermo...
           </p>
         </div>
         

@@ -78,11 +78,11 @@
 }
 
 @layer utilities {
-  .transparent-navbar {
-    background-color: transparent;
-    backdrop-filter: blur(8px);
-    transition: all 0.4s ease;
-  }
+.transparent-navbar {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), transparent);
+  backdrop-filter: blur(8px);
+  transition: all 0.4s ease;
+}
   
   .colored-navbar {
     background-color: hsl(var(--background));

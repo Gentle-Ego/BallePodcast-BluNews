@@ -1,5 +1,5 @@
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Play, Pause, SkipBack, SkipForward, Volume2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
@@ -26,36 +26,42 @@ export function AudioPlayer({
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.8);
 
+  const handleLoadedMetadata = useCallback(() => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  }, []);
+
+  const handleEnded = useCallback(() => {
+    setIsPlaying(false);
+    setCurrentTime(0);
+  }, []);
+
   useEffect(() => {
     // Reset player when episode changes
     setIsPlaying(false);
     setCurrentTime(0);
-    
+
     // Create audio element
     const audio = new Audio(episode.audioUrl);
     audioRef.current = audio;
-    
+
     // Set event listeners
     audio.addEventListener("timeupdate", updateProgress);
-    audio.addEventListener("loadedmetadata", () => {
-      setDuration(audio.duration);
-    });
-    audio.addEventListener("ended", () => {
-      setIsPlaying(false);
-      setCurrentTime(0);
-    });
-    
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("ended", handleEnded);
+
     // Set volume
     audio.volume = volume;
-    
+
     return () => {
       // Clean up
       audio.pause();
       audio.removeEventListener("timeupdate", updateProgress);
-      audio.removeEventListener("loadedmetadata", () => {});
-      audio.removeEventListener("ended", () => {});
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("ended", handleEnded);
     };
-  }, [episode]);
+  }, [episode, volume, handleLoadedMetadata, handleEnded]);
 
   const updateProgress = () => {
     if (audioRef.current) {
