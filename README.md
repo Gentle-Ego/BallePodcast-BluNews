@@ -1,14 +1,5 @@
-# BallePodcast-BluNews
-
+# Welcome to my Podcast Website project!
 (you can check this project here: https://blunews.vercel.app)
-
-## Technologies Used
-
-- Vite
-- React
-- TypeScript
-- Tailwind CSS
-- shadcn-ui
 
 ## How can I edit this code?
 
