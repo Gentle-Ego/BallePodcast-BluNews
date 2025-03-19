@@ -11,6 +11,17 @@ export interface Episode {
 }
 
 const episodes: Episode[] = [
+   {
+    id: "26",
+    title: "BluNews N°26",
+    date: "25 Marzo 2025",
+    description: "I COMPITI A CASA? SPESSO LI FA CHATGPT",
+    imageUrl: "/images/blunews26.png",
+    audioUrl: "/audio/blunews26.mp3",
+    duration: "5:15",
+    featured: true,
+    transcriptUrl: "/transcripts/episode26.txt"
+  },
   {
     id: "25",
     title: "BluNews N°25",
